@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/vega@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@latest"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollToPlugin.min.js"></script>
+
+    <style>
+
+      body {
+        font-family: sans-serif;
+        overflow-x: hidden;
+        background-color: #43a2d2;
+      }
+
+      .superlarge {
+        font-size: 72px;
+        font-family: Blippo, fantasy;
+      }
+
+      .larger {
+        font-family: impact; 
+        font-size:36px;
+      }
+
+
+      @keyframes drawLine {
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+
+      path {
+        stroke-dasharray: 2000;
+        stroke-dashoffset: 2000;
+        animation: drawLine 2s forwards;
+      }
+
+      .panel {
+        padding-top:400px;
+        padding-left:100px;
+        height: 50%;
+        width: 100%;
+        background-color: #43a2d2;
+        opacity: 0;
+      }    
+
+    </style>
+</head>
+<body>
+  <div class='panel' style='padding-top: 0px;'>
+    <div id='text0' class='superlarge'>
+      <img src='DonutDrive.jpg' alt='Donuts on their way to work' width="1024" height="576"><br>
+        <div id='text01' class="superlarge">
+          We all know America Runs on Dunkin<br>But are we running too fast?
+        </div>
+      </div>
+    </div>
+    <div class='panel' style='padding-top:600px'>
+      <div id='text1' class='larger'>
+          Of the 351 cities and towns in Massachusetts, 252 have at least One Dunkin Donuts location.
+      </div>
+
+      <img src="DDbar.svg" width="1024" height="576" alt="Bar chart of top 8 cities in MA by number of Dunkin Donuts." />
+      <div id='annotation1' class='larger' style='position: absolute; margin-left: 1000px; margin-top: -460px;'><img src='nodonut.png' style='width:100px;vertical-align: middle;'>That means 99 cities/towns are lacking in the Dunkins department.</div>
+    </div>
+
+    <div class='panel' style='padding-top:600px'>
+      <div id='text1' class='larger'>
+          Below we have a heat map of all 1074 Dunkin Donuts location in Massachusetts.
+      </div>
+
+      <img src="DDheat.png" width="1024" height="576" alt="Heat map of Dunkin Donuts locations." />
+    </div>
+
+    <div class='panel' style='padding-top:600px'>
+      <div id='text1' class='larger'>
+          Of the 351 cities and towns in Massachusetts, 343 had at least one recorded crash in 2023.
+      </div>
+
+      <img src="crashbar.svg" width="1024" height="576" alt="Bar chart of top 8 cities in MA by number of Dunkin Donuts." />
+      <div id='annotation1' class='larger' style='position: absolute; margin-left: 1000px; margin-top: -460px;'><img src='happydonut.png' style='width:100px;vertical-align: middle;'>That means only 8 cities were crash free.</div>
+    </div>
+
+    <div class='panel' style='padding-top:600px'>
+      <div id='text1' class='larger'>
+          And here we have a heat map of all 316,056 recorded car crashes in Massachusetts during the year 2023.
+      </div>
+
+      <img src="crashheat.png" width="1024" height="576" alt="Heat map of crashes in 2023." />
+    </div>
+
+    <div class='panel' style='padding-top:600px'>
+      <div id='text1' class='larger'>
+        <img src='trafficjam.jpg' width="1024" height="576" alt="Donut traffic Jam." />
+          <div id='text1'class='larger'>
+            Although there seems to be a coorelation between the quantity of Dunkin Donuts locations and the number of car crashes in Massachusetts cities and towns, further research is needed before I plan on kicking the coffee and Joe habit!
+        </div>
+      </div>
+    </div>
+
+    <div id='scrollindicator'><img src='scroll.png' style='position:fixed;right:30px;bottom:30px;width:60px;opacity:0.5'></div>
+
+    <script>
+      gsap.registerPlugin(ScrollTrigger);
+
+      gsap.to(".panel:first-child", {opacity: 1, duration: 0});
+
+      gsap.utils.toArray(".panel").forEach((panel, i, panels) => {
+        ScrollTrigger.create({
+          trigger: panel,
+          start: "top top",
+          end: "+=50%",
+          onEnter: function() {
+
+            gsap.to(panel, {opacity: 1, duration: 1});
+            // PPP = panel
+            paths = panel.querySelectorAll('svg .role-mark path');
+            
+            console.log(paths)
+
+            for (var i=0; i<paths.length; i++) {
+              
+              p = paths[i];
+
+              clonedP = p.cloneNode();
+              parentE = p.parentElement;
+
+              parentE.removeChild(p);
+              parentE.appendChild(clonedP);
+
+            }
+
+          },
+          // onLeave: () => gsap.to(panel, {opacity: 0, duration: 1}),
+          onLeaveBack: () => gsap.to(panel, {opacity: 0, duration: 1}),
+          markers: false,
+        });
+      });
+
+
+      // Scroll back to top
+      gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+      ScrollTrigger.create({
+        trigger: document.body,
+        start: "bottom bottom",
+        once: false,
+        onEnter: () => {
+          gsap.to(window, {duration: 2, scrollTo: {y: 10}});
+        }
+      });
+    </script>
+</body>
+</html>
